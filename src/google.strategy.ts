@@ -6,6 +6,7 @@ import { Injectable } from '@nestjs/common';
 
 config();
 
+
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
 
@@ -13,12 +14,13 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
     super({
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_SECRET,
-      callbackURL: 'http://localhost:3000/auth/google',
+      callbackURL: 'http://localhost:3000/auth/google/redirect',
       scope: ['email', 'profile'],
+      passReqToCallback: true,
     });
   }
 
-  async validate (accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
+  async validate (req: Request, accessToken: string, refreshToken: string, profile: any, done: VerifyCallback): Promise<any> {
     const { name, emails } = profile
     const user = {
       email: emails[0].value,
